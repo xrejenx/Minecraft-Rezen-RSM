@@ -14,7 +14,7 @@ A modpack designed to make survival gameplay more immersive and challenging.
 
 ## Important Notes
 - Designed for **single-player survival or Server that have This Modpack installed** only.
-- optimized for multiplayer — if used this modpack on a server, ensure all players have the same modpack installed.
+- Optimized for multiplayer — if used this modpack on a server, ensure all players have the same modpack installed.
 - **Minimum RAM**: 4GB
 - **Recommended RAM**: 6GB or more
 
