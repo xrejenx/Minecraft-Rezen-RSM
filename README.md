@@ -7,7 +7,7 @@ A modpack designed to make survival gameplay more immersive and challenging.
 - Water mechanics rework: No more 3-block or 4-block infinite water sources
 - Seasonal changes impacting the world and gameplay
 - Classic combat mechanics with new tools and weapon types
-- Quality of life improvements for single-player survival
+- Quality of life improvements for survival
 
 ## Minecraft Version
 - **Currently supports**: 1.21.11
