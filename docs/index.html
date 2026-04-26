@@ -1,4 +1,224 @@
-<html><body><ul>
+<html>
+<head>
+  <title>RSM Modlist Viewer</title>
+  <style>
+    :root {
+      --bg-dark: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      --bg-light: #ffffff;
+      --text-dark: #ffffff;
+      --text-light: #000000;
+      --card-bg-dark: rgba(255,255,255,0.15);
+      --card-bg-light: #f5f5f5;
+      --link-dark: #00e0ff;
+      --link-light: #0066cc;
+    }
+
+    body {
+      font-family: Segoe UI, Arial, sans-serif;
+      margin: 0;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      transition: background 0.5s, color 0.5s;
+    }
+
+    body.light { background: var(--bg-light); color: var(--text-light); }
+    body.blue-theme { background: linear-gradient(135deg,#1e3c72,#2a5298); color: #fff; }
+    body.green-theme { background: linear-gradient(135deg,#0f9b0f,#000000); color: #fff; }
+
+    header {
+      background: rgba(0,0,0,0.4);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 { margin: 0; }
+    section { margin: 40px auto; max-width: 1200px; }
+    h2 { margin-bottom: 15px; }
+
+    .modlist-box {
+      background: var(--card-bg-dark);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      backdrop-filter: blur(20px) saturate(180%);
+      transition: background 0.5s;
+    }
+
+    .modlist-box ul { list-style: none; padding: 0; margin: 0; }
+
+    .list-view {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .list-view li {
+      background: var(--card-bg-dark);
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, background 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .list-view li:hover {
+      background: rgba(255,255,255,0.25);
+      transform: scale(1.02);
+    }
+    .list-view li a {
+      color: var(--link-dark);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .list-view li a:hover { color: #ffcc00; }
+
+    .grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      transition: all 0.5s ease;
+    }
+    .grid-view li {
+      background: var(--card-bg-dark);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 160px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .grid-view li:hover {
+      background: rgba(255,255,255,0.25);
+      transform: scale(1.05);
+    }
+    .grid-view li a {
+      color: var(--link-dark);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .grid-view li a:hover { color: #ffcc00; }
+
+    body.light .modlist-box { background: var(--card-bg-light); }
+    body.light .list-view li { background: var(--card-bg-light); }
+    body.light .grid-view li { background: var(--card-bg-light); }
+    body.light .modlist-box li a { color: var(--link-light); }
+    body.light .modlist-box li a:hover { color: #cc0000; }
+
+    .controls { text-align: center; margin: 20px; }
+    .controls button {
+      margin: 0 10px; padding: 12px 20px;
+      border: none; border-radius: 4px;
+      cursor: pointer; font-weight: bold;
+      background: rgba(255,255,255,0.2); color: #fff;
+      backdrop-filter: blur(6px);
+      transition: background 0.3s, transform 0.3s;
+    }
+    .controls button:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+    body.light .controls button {
+      background: #f0f0f0;
+      color: #000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    body.light .controls button:hover {
+      background: #e0e0e0;
+      color: #000;
+    }
+
+    .theme-box {
+      margin: 20px auto;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px;
+      backdrop-filter: blur(15px);
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      width: fit-content; /* shrink to fit buttons */
+    }
+    .theme-box button {
+      flex: 0 0 auto;
+      padding: 10px 15px;
+      border: none; border-radius: 6px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.2); color: #fff;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .theme-box button:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+    body.light .theme-box button {
+      background: #f0f0f0;
+      color: #000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    body.light .theme-box button:hover {
+      background: #e0e0e0;
+      color: #000;
+    }
+
+    /* Search box styles */
+    .search-box {
+      text-align: center;
+      margin: 10px auto 0;
+    }
+    .search-box input {
+      width: 60%;
+      max-width: 420px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 15px;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .search-box input::placeholder { color: rgba(255,255,255,0.7); }
+    .search-box input:focus {
+      outline: none;
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.28);
+    }
+    body.light .search-box input {
+      background: #f5f5f5;
+      color: #000;
+      border: 1px solid #ddd;
+    }
+    body.light .search-box input::placeholder { color: #666; }
+  </style>
+</head>
+<body>
+  <header><h1>Modpack: 2.4 B571</h1></header>
+
+  <div class="controls">
+    <button onclick="toggleMode()">Dark/Light Mode</button>
+    <button onclick="toggleView()">List/Grid View</button>
+  </div>
+
+  <div class="theme-box">
+    <button onclick="setTheme('')">🌙 Dark</button>
+    <button onclick="setTheme('light')">☀ Light</button>
+    <button onclick="setTheme('blue-theme')">💠 Blue</button>
+    <button onclick="setTheme('green-theme')">🌿 Green</button>
+  </div>
+
+  <!-- Search input (filters both list and grid) -->
+  <div class="search-box">
+    <input id="searchInput" type="text" placeholder="Search mods...">
+  </div>
+
+  <section id="modlist">
+    <h2>Mod List</h2>
+    <div class="modlist-box">
+      <ul id="mods" class="list-view">
 	<li><a href="https://modrinth.com/mod/zV5r3pPn">3d-Skin-Layers</a> [1.11.1] by tr7zw</li>
 	<li><a href="https://modrinth.com/mod/CFX9ftUJ">Advanced Netherite</a> [2.4.0-1.21.11] by Autovw</li>
 	<li><a href="https://modrinth.com/mod/Gi02250Z">Almanac</a> [1.6.2] by frikinjay</li>
@@ -49,8 +269,8 @@
 	<li><a href="https://modrinth.com/mod/4alTd2ag">Consumable Optimizer</a> [2.2.1-1.21.5] by Walksy</li>
 	<li><a href="https://modrinth.com/mod/1IjD5062">Continuity</a> [3.0.1-beta.1+1.21.11] by PepperCode1</li>
 	<li><a href="https://modrinth.com/mod/xv94TkTM">Controlling</a> [29.0.1] by Jaredlll08</li>
-	<li><a href="https://modrinth.com/mod/iDyqnQLT">CoolRain</a> [1.4.0-1.21.11] by Jaiz, 
-, Config Coding Help:, trashoflevillage, 
+	<li><a href="https://modrinth.com/mod/iDyqnQLT">CoolRain</a> [1.4.0-1.21.11] by Jaiz,
+, Config Coding Help:, trashoflevillage,
  , NeoForge Port and Coding Help:, Leclowndu93150</li>
 	<li><a href="https://modrinth.com/mod/ziOp6EO8">CorgiLib</a> [9.0.0.0] by Corgi Taco, Joseph T. McQuigg (JT122406)</li>
 	<li><a href="https://modrinth.com/mod/DMu0oBKf">Crafting Tweaks</a> [21.11.5] by BlayTheNinth</li>
@@ -315,4 +535,57 @@
 	<li><a href="https://modrinth.com/mod/HXJ5ZvP5">panda-anti-lag</a> [2.2.0_1.21.11] by TreeOfSelf</li>
 	<li><a href="https://modrinth.com/mod/l6YH9Als">spark</a> [1.10.170] by Luck</li>
 	<li><a href="https://modrinth.com/mod/PfI69WTw">wandsofcombat</a> [1.0.0]</li>
-</ul></body></html>
+      </ul>
+    </div>
+  </section>
+
+  <script>
+    function toggleMode() {
+      document.body.classList.toggle("light");
+    }
+
+    function toggleView() {
+      const mods = document.getElementById("mods");
+      if (mods.classList.contains("list-view")) {
+        mods.classList.remove("list-view");
+        mods.classList.add("grid-view");
+      } else {
+        mods.classList.remove("grid-view");
+        mods.classList.add("list-view");
+      }
+    }
+
+    function setTheme(theme) {
+      document.body.classList.remove("light", "blue-theme", "green-theme");
+      if (theme) {
+        document.body.classList.add(theme);
+      }
+    }
+
+    // Search filter for both list and grid views
+    (function() {
+      const input = document.getElementById('searchInput');
+      const modsList = document.getElementById('mods');
+
+      function filterMods() {
+        const query = input.value.trim().toLowerCase();
+        const items = modsList.querySelectorAll('li');
+        items.forEach(li => {
+          const text = li.innerText.toLowerCase();
+          li.style.display = text.includes(query) ? '' : 'none';
+        });
+      }
+
+      // filter as user types
+      input.addEventListener('input', filterMods);
+
+      // also filter when view toggles (keeps current query applied)
+      const originalToggleView = toggleView;
+      window.toggleView = function() {
+        originalToggleView();
+        filterMods();
+      };
+    })();
+  </script>
+</body>
+</html>
